@@ -354,3 +354,18 @@ print.Benford <- function(x,how.many=5,...){
   absolute.diff <- NULL
   digits <- NULL
 }
+
+##' @title Enhanced Benford function by group
+##' @description This runs \code{benford} by group, and allows selective reporting of results
+##' @usage 
+##' 
+##' \method{print}{Benford}(x, how.many=5, ...)
+##' @param  x a "Benford" object.
+##' @param how.many a number that defines how many of the biggest absolute differences to show.
+##' @param ... arguments to be passed to generic print functions.
+##' @return Prints the Benford object.
+##' @export
+print.Benford <- function(x,how.many=5,...){
+  
+
+}
