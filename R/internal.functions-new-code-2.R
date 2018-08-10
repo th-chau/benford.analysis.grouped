@@ -175,6 +175,7 @@ generate.benford.digits <- function(number.of.digits) {
   return(benford.digits)
 }
 
+
 generate.benford.distribution <- function(benford.digits) {
   benford.dist <- sapply(benford.digits, p.these.digits)
   return(benford.dist)

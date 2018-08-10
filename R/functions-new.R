@@ -1,4 +1,6 @@
 #### Package benford.analysis ####
+### Modified to enable group analysis functionalities; original functions are mostly kept untouched, with slight modifications in efficiency of the code and to reduce dependencies.
+### Goal: new functions that enable efficient analysis and forewarning of irregularities that are clustered in certain groups
 
 ##' Benford Analysis for data validation and forensic analytics
 ##' 

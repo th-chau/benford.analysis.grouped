@@ -103,6 +103,7 @@ getDuplicates <-function(bfd, data, how.many=2){
   data.table(data[duplicates.lines, ,drop = FALSE])
 }
 
+
 #' @title Gets the data starting with some specific digits
 #' @description It subsets the original data according to the leading digits.
 #' @usage
