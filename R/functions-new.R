@@ -1,47 +1,9 @@
-#### Package benford.analysis ####
-### Modified to enable group analysis functionalities; original functions are mostly kept untouched, with slight modifications in efficiency of the code and to reduce dependencies.
-### Goal: new functions that enable efficient analysis and forewarning of irregularities that are clustered in certain groups
+#### Package benford.analysis.grouped ####
 
-##' Benford Analysis for data validation and forensic analytics
-##' 
-##' The Benford Analysis package provides tools that make it easier to
-##' validate data using Benford's Law. The main purpose of the package is
-##' to identify suspicious data that need further verification.
-##' 
-##' More information can be found on its help documentation.
-##' 
-##' The main function is \code{\link{benford}}. It generates a \code{Benford} S3 object.
-##' 
-##' The package defines S3 methods for plotting and printing Benford type objects.
-##' 
-##' After running \code{benford} you can easily get the "suspicious" data by using the 
-##' functions: \code{\link{suspectsTable}}, \code{\link{getSuspects}}, \code{\link{duplicatesTable}} and
-##' \code{\link{getDuplicates}}. See help documentation and examples for further details.
-##' 
-##' The package also includes 6 real datasets for illustration purposes.
-##' 
-##' @examples
-##' data(corporate.payment) #gets data
-##' cp <- benford(corporate.payment$Amount, 2, sign="both") #generates benford object
-##' cp #prints 
-##' plot(cp) #plots
-##' 
-##' head(suspectsTable(cp),10) #prints the digits by decreasing order of discrepancies
-##' 
-##' #gets observations of the 2 most suspicious groups
-##' suspects <- getSuspects(cp, corporate.payment, how.many=2) 
-##' 
-##' duplicatesTable(cp) #prints the duplicates by decreasing order
-##' 
-##' #gets the observations of the 2 values with most duplicates
-##' duplicates <- getDuplicates(cp, corporate.payment,how.many=2) 
-##' 
-##' MAD(cp) #gets the Mean Absolute Deviation
-##' 
-##' chisq(cp) #gets the Chi-squared test
-##' 
-##' #gets observations starting with 50 or 99
-##' digits_50_and_99 <- getDigits(cp, corporate.payment, digits=c(50, 99)) 
+##' Stremlining Benford Analysis for data validation and forensic analytics by group.
+##'
+##' Modified to enable group analysis functionalities; original functions are mostly kept untouched, with slight modifications in efficiency of the code and to reduce dependencies.
+##' Goal: new functions that enable efficient analysis and forewarning of irregularities that are clustered in certain groups
 ##' 
 ##' @references Alexander, J. (2009). Remarks on the use of Benford's Law. Working Paper, Case Western Reserve University, Department of Mathematics and Cognitive Science.
 ##' \cr\cr Berger, A. and Hill, T. (2011). A basic theory of Benford's Law. Probability Surveys, 8, 1-126.
@@ -51,8 +13,8 @@
 ##' \cr\cr 
 ##' 
 ##' @docType package
-##' @aliases benford.analysis-package
-##' @name benford.analysis
+##' @aliases benford.analysis.grouped-package
+##' @name benford.analysis.grouped
 ##' 
 NULL
 
