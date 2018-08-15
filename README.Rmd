@@ -23,6 +23,13 @@ To install the GitHub version you need to have the package `devtools` installed.
 
 ```{r, eval = FALSE}
 # install.packages("devtools") # run this to install the devtools package
+
+# If you need to use a proxy, run the following before:
+## library(httr)
+## set_config(
+##  use_proxy(url="18.1.1.1", port=8080)
+## )
+
 devtools::install_github("th-chau/benford.analysis.grouped", build_vignettes = TRUE)
 ```
 
