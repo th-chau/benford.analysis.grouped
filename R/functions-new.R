@@ -510,13 +510,13 @@ benford.sum.table <- function(ListOfBenfordObjects){
 ##' @title Plots a list of Benford objects
 ##' @description This takes a list of \code{benford} objects and generates plots for each of the objects, while providing additional information compared to the default plot.Benford function. 
 ##' @usage
-##' plot.Benford.list(ListOfBenfordObjects, except=c("summation", "abs diff"), multiple=TRUE ,...))
+##' Benford.list.plot(ListOfBenfordObjects, except=c("summation", "abs diff"), multiple=TRUE ,...))
 ##' @param ListOfBenfordObjects a list of benford objects.
 ##' @param except a character vector containing what plots not to plot. For details use ?plot.Benford
 ##' @param multiple plot multiple plots on the same page
 ##' @export
 
-plot.Benford.list <- function(List, except=c("summation", "abs diff"), multiple=TRUE ,...){
+Benford.list.plot <- function(List, except=c("summation", "abs diff"), multiple=TRUE ,...){
   
 
 for(i in 1:length(names(List))){
