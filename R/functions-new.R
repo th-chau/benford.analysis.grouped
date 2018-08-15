@@ -113,6 +113,7 @@ NULL
 ##' \item difference: the difference between the data and benford frequencies.
 ##' \item squared.diff: the chi-squared difference between data and benford frequencies.
 ##' \item absolute.diff: the absolute difference between data and benford frequencies.
+##' \item ks
 ##' }}
 ##' 
 ##' \item{mantissa}{a data frame with: \itemize{
@@ -168,6 +169,7 @@ benford <- function(data, number.of.digits = 2, sign = "positive", discrete=TRUE
   ### MAD
   mean.abs.dev <- sum(abs(empirical.distribution$dist - benford.dist)/(length(benford.dist)))
   
+
   ### Summation
   summation <- generate.summation(benford.digits,empirical.distribution$data, empirical.distribution$data.digits)
   abs.excess.summation <- abs(summation - mean(summation))
@@ -245,7 +247,7 @@ benford <- function(data, number.of.digits = 2, sign = "positive", discrete=TRUE
 ##' @description The \code{plot} method for "Benford" objects.
 ##' @usage 
 ##' 
-##' \method{plot}{Benford}(x,except=c("mantissa","abs diff"), multiple=TRUE, ...) 
+##' \method{plot}{Benford}(x,except=c("chi square","abs diff"), multiple=TRUE, ...) 
 ##' @param  x a "Benford" object
 ##' @param except it specifies which plots are not going to be plotted.
 ##' Currently, you can choose from 7 plots: "digits", "second order", "summation",
@@ -259,7 +261,7 @@ benford <- function(data, number.of.digits = 2, sign = "positive", discrete=TRUE
 ##' @importFrom stats pchisq var
 ##' @importFrom utils head
 ##' @importFrom stats setNames
-plot.Benford<- function(x, except=c("mantissa","abs diff"), multiple=TRUE ,...){
+plot.Benford<- function(x, except=c("chi square", "abs diff"), multiple=TRUE ,...){
   
   old.par <- par(no.readonly=TRUE)
   
@@ -356,16 +358,258 @@ print.Benford <- function(x,how.many=5,...){
 }
 
 ##' @title Enhanced Benford function by group
-##' @description This runs \code{benford} by group, and allows selective reporting of results
-##' @usage 
+##' @description This runs \code{benford} by group, and allows selective reporting of results. This returns a list of Benford objects by group
+##' For a more complete example, see the package help at \link{benford.analysis}.
+##'
+##' @usage
+##' benford.by.group(data, groupnamevect, number.of.digits = 2, sign = "positive", discrete=TRUE, round=3, minlength = 100)
+##' @param data a numeric vector.
+##' @param groupnamevect a character vector that allows the numeric vector to be grouped into different groups
+##' @param number.of.digits how many first digits to analyse .
+##' @param sign  The default value for sign is "positive" and it analyzes only data greater than zero. 
+##' There are also the options "negative" and "both" that will analyze only negative values or both positive and negative values of the data,
+##' respectively. For large datasets with both positive and negative numbers, 
+##' it is usually recommended to perform a separate analysis for each group,
+##' for the incentives to manipulate the numbers are usually different.
+##' @param discrete most real data - like population numbers or accounting data - are discrete, so 
+##' the default is TRUE. This paramater sets rounding to the differences of the ordered data to avoid floating point number
+##' errors in the second order distribution, that usually occurs when data is discrete
+##' and the ordered numbers are very close to each other. If your data is continuous
+##' (like a simulated lognormal) you should run with discrete = FALSE. 
+##' @param round it defines the number of digits that the rounding will use if discrete = TRUE.
+##' @param minlength it defines the minimum elements within a group in order for a benford object to be returned
+##' @return A list containing objects of class Benford containing the results of the analysis. It is a list of 
+##' Benford objects grouped by unique values of groupnamevect, and in each of the Benford object within the list it contains:
 ##' 
-##' \method{print}{Benford}(x, how.many=5, ...)
-##' @param  x a "Benford" object.
-##' @param how.many a number that defines how many of the biggest absolute differences to show.
-##' @param ... arguments to be passed to generic print functions.
-##' @return Prints the Benford object.
+##' \item{info}{general information, including \itemize{
+##' \item data.name: the name of the data used.
+##' \item n: the number of observations used.
+##' \item n.second.order: the number of observations used for second order analysis.
+##' \item number.of.digits: the number of first digits analysed.
+##' }}
+##' 
+##' \item{data}{a data frame with: \itemize{
+##' \item lines.used: the original lines of the dataset.
+##' \item data.used: the data used.
+##' \item data.mantissa: the log data's mantissa.
+##' \item data.digits: the first digits of the data.
+##' }}
+##' 
+##' \item{s.o.data}{a data frame with: \itemize{
+##' \item data.second.order: the differences of the ordered data.
+##' \item data.second.order.digits: the first digits of the second order analysis.
+##' }}
+##' 
+##' \item{bfd}{a data frame with: \itemize{
+##' \item digits: the groups of digits analysed.
+##' \item data.dist: the distribution of the first digits of the data.
+##' \item data.second.order.dist: the distribution of the first digits of the second order analysis.
+##' \item benford.dist: the theoretical benford distribution.
+##' \item data.second.order.dist.freq: the frequency distribution of the first digits of the second order analysis.
+##' \item data.dist.freq: the frequency distribution of the first digits of the data.
+##' \item benford.dist.freq: the theoretical benford frequency distribution.
+##' \item benford.so.dist.freq: the theoretical benford frequency distribution of the second order analysis.
+##' \item data.summation: the summation of the data values grouped by first digits.
+##' \item abs.excess.summation: the absolute excess summation of the data values grouped by first digits.
+##' \item difference: the difference between the data and benford frequencies.
+##' \item squared.diff: the chi-squared difference between data and benford frequencies.
+##' \item absolute.diff: the absolute difference between data and benford frequencies.
+##' \item ks
+##' }}
+##' 
+##' \item{mantissa}{a data frame with: \itemize{
+##' \item mean.mantissa: the mean of the mantissa.
+##' \item var.mantissa: the variance of the mantissa.
+##' \item ek.mantissa: the excess kurtosis of the mantissa.
+##' \item sk.mantissa: the skewness of the mantissa.
+##' }}
+##' 
+##' \item{MAD}{the mean absolute deviation.}
+##' \item{distortion.factor}{the distortion factor} 
+##' 
+##' \item{stats}{list of "htest" class statistics: \itemize{
+##' \item chisq: Pearson's Chi-squared test.
+##' \item mantissa.arc.test: Mantissa Arc Test.
+##' }}
+##' @examples 
+##' data(corporate.payment) #loads data
+##' bfd.cp <- benford.by.group(corporate.payment$Amount, corporate.payment$Date) #generates list of benford objects
+##' bfd.cp[1] #prints
+##' plot(bfd.cp[1]) #plots
+##' 
 ##' @export
-print.Benford <- function(x,how.many=5,...){
+benford.by.group <- function(data, groupnamevect, number.of.digits = 2, sign = "positive", discrete=TRUE, round=3, minlength = 100){
   
+  output <- list()
+
+  # Select only non-NA values
+  groupnamevect <- groupnamevect[!is.na(data)]
+  data <- data[!is.na(data)]
+
+  for(i in 1:length(unique(groupnamevect))){
+      ElementsToSelect <- groupnamevect == unique(groupnamevect)[[i]]
+      DataSubSet <- data[ElementsToSelect]
+      DataSubSet <- DataSubSet[!is.na(DataSubSet) & !DataSubSet == 0]
+        if(!is.na(unique(groupnamevect)[[i]]) & length(DataSubSet) > minlength){
+          names(DataSubSet) <- paste0(unique(groupnamevect)[[i]])
+          temp <- benford(DataSubSet, number.of.digits = 2, sign = "positive", discrete=TRUE, round=3)
+          output[[unique(groupnamevect)[[i]]]] <- temp
+    }
+  }
+
+  return(output)
 
 }
+
+
+##' @title Subset Benford objects based on anomalous results
+##' @description This takes a list of \code{benford} objects and returns a list of \code{benford} objects that pass the specified criteria.
+##'
+##' @usage
+##' benford.select.group(ListOfBenfordObjects, AreaThreshold = 0.1, MantissaThreshold = 0.05, LogicalRelationship = "AND")
+##' @param ListOfBenfordObjects a list of benford objects.
+##' @param AreaThreshold this sets the *minimum* value for an object to be flagged.
+##' This is the summed deviation of the discrete empirical distribution curve from the discrete Benford curve; in other words, this is the total area in whcih the two curves are not in agreement. 
+##' @param This sets the *maximum* p-value of the Mantissa arc test for an object to be flagged.
+##' @param LogicalRelationship this takes a string - "AND", "OR" - to specify whether an object should be flagged when it satisfies one or both criteria
+##' @return A list containing objects of class Benford that satisfy one or both of the criteria.
+##' 
+##' @examples 
+##' Sublist <- benford.select.group(ListOfBenfordObjects, AreaThreshold = 0.1, MantissaThreshold = 0.05, LogicalRelationship = "AND")
+##' plot(ListOfBenfordObjects[[1]])
+##' 
+##' @export
+
+benford.select.group <- function(ListOfBenfordObjects, AreaThreshold = 0.1, MantissaThreshold = 0.05, LogicalRelationship = "AND"){
+
+if(!(LogicalRelationship == "AND" | LogicalRelationship == "and" | LogicalRelationship == "or" | LogicalRelationship == "OR")){
+  stop("Logical relationship between the two conditions must be a character vector 'AND' / 'OR'")
+}
+
+SubsetOutput <- list()
+
+  for(i in 1:length(names(ListOfBenfordObjects))){
+
+    AreaDeviation <- sum(abs(ListOfBenfordObjects[[i]][["bfd"]][["data.dist"]] - ListOfBenfordObjects[[i]][["bfd"]][["benford.dist"]]))
+    Mantissa.p.Value <- ListOfBenfordObjects[[i]][["stats"]][["mantissa.arc.test"]][["p.value"]]
+
+    if(LogicalRelationship == "AND" | LogicalRelationship == "and"){
+      if(AreaDeviation > AreaThreshold & Mantissa.p.Value < MantissaThreshold){
+            SubsetOutput[[names(ListOfBenfordObjects)[[i]]]] <- ListOfBenfordObjects[[i]]
+      }
+    }
+
+    if(LogicalRelationship == "Or" |LogicalRelationship == "or"){
+      if(AreaDeviation > AreaThreshold | Mantissa.p.Value < MantissaThreshold){
+            SubsetOutput[[names(ListOfBenfordObjects)[[i]]]] <- ListOfBenfordObjects[[i]]
+      }
+    }
+
+  }
+
+return(SubsetOutput)
+
+}
+
+
+##' @title Summary table of a list of Benford objects
+##' @description This takes a list of \code{benford} objects and returns a summary table of the list, containing the following for each object: name, observations, number of digits used, Mantissa statistic, p-value of MantissaStat arc test and the total deviation of the empirical distribution from the Benford distribution.
+##'
+##' @usage
+##' benford.sum.table(ListOfBenfordObjects)
+##' @param ListOfBenfordObjects a list of benford objects.
+##' 
+##' @export
+
+benford.sum.table <- function(ListOfBenfordObjects){
+
+    for(i in 1:length(names(ListOfBenfordObjects))){
+
+    AreaDeviation <- sum(abs(ListOfBenfordObjects[[i]][["bfd"]][["data.dist"]] - ListOfBenfordObjects[[i]][["bfd"]][["benford.dist"]]))
+    Mantissa.p.Value <- ListOfBenfordObjects[[i]][["stats"]][["mantissa.arc.test"]][["p.value"]]
+
+    if(i == 1){
+
+      OutputDF <- data.frame(Name = names(ListOfBenfordObjects)[[i]], Observations = ListOfBenfordObjects[[i]][["info"]][["n"]], NoOfDigits = ListOfBenfordObjects[[i]][["info"]][["number.of.digits"]], MantissaStat = ListOfBenfordObjects[[i]][["stats"]][["mantissa.arc.test"]][["statistic"]], MantissaPValue = Mantissa.p.Value, AreaDeviation = AreaDeviation)
+
+    }else{
+
+    Temp <- data.frame(Name = names(ListOfBenfordObjects)[[i]], Observations = ListOfBenfordObjects[[i]][["info"]][["n"]], NoOfDigits = ListOfBenfordObjects[[i]][["info"]][["number.of.digits"]], MantissaStat = ListOfBenfordObjects[[i]][["stats"]][["mantissa.arc.test"]][["statistic"]], MantissaPValue = Mantissa.p.Value, AreaDeviation = AreaDeviation)
+
+      OutputDF <- rbind(OutputDF, Temp)
+    }
+
+  }
+
+  return(OutputDF)
+
+}
+
+##' @title Plots a list of Benford objects
+##' @description This takes a list of \code{benford} objects and generates plots for each of the objects, while providing additional information compared to the default plot.Benford function. 
+##' @usage
+##' plot.Benford.list(ListOfBenfordObjects, except=c("summation", "abs diff"), multiple=TRUE ,...))
+##' @param ListOfBenfordObjects a list of benford objects.
+##' @param except a character vector containing what plots not to plot. For details use ?plot.Benford
+##' @param multiple plot multiple plots on the same page
+##' @export
+
+plot.Benford.list <- function(List, except=c("summation", "abs diff"), multiple=TRUE ,...){
+  
+
+for(i in 1:length(names(List))){
+
+
+  x <- List[[i]]
+
+  old.par <- par(no.readonly=TRUE)
+  
+  if(class(x)!="Benford") stop("Class(x) must be 'Benford'")
+  
+  if(!any(except %in% c("digits", "second order", "summation",
+                     "mantissa", "chi squared", "abs diff","none"))) {stop("Invalid except name. Type ?plot.Benford for help.")}
+  
+  if(multiple){
+    
+    nGraphics <- 8 - length(except)
+    
+    if(nGraphics<4){rows=1; cols=nGraphics}
+    if(nGraphics >=4 & nGraphics<=6){rows=2; cols=3}
+    if(nGraphics>6){rows=2; cols=4}
+    
+    par(mfrow=c(rows,cols))
+  }
+  
+  if(all(except!="digits")){
+  plotting.data.vs.benford.v2(x, ...)
+  }
+  
+  if(all(except!="second order")){
+  plotting.second.order(x, ...)
+  }
+  
+  if(all(except!="summation")){
+  plotting.summation(x, ...)
+  }
+  
+  if(all(except!="mantissa")){
+  plotting.ordered.mantissa(x, ...)
+  }
+  
+  if(all(except!="chi squared")){
+  plotting.chi_squared.v2(x, ...)
+  }
+  
+  if(all(except!="abs diff")){
+  plotting.abs.diff(x, ...)
+  }
+  
+  if(all(except!="ex summation")){
+  plotting.ex.summation(x, ...)
+  }
+  
+  plotting.legend.list(x, names(List)[[i]])
+  
+  par(old.par)
+  
+}}

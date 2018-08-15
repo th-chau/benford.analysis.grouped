@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-The Benford Analysis Grouped (`benford.analysis.grouped`) is a modification of the Benford package by carloscinelli. This version allows for Benford tests to be run by group, with intelligent selection of digits to be tested, and selective reporting of significant and / or most anomalous results.
+The Benford Analysis Grouped (`benford.analysis.grouped`) is a modification of the benford.analysis package by carloscinelli. This version allows for Benford tests to be run by group, with intelligent selection of digits to be tested, and selective reporting of significant and / or most anomalous results.
 
 ## How to install the package from GitHub
 
@@ -28,6 +28,6 @@ devtools::install_github("th-chau/benford.analysis.grouped", build_vignettes = T
 
 ## Example usage
 
-Please see documentation of benford for details.
+Please see documentation of benford.analysis for details.
 
-Documentation outlining specific commands will be uploaded soon.
+Documentation outlining new commands in this package will be uploaded soon.

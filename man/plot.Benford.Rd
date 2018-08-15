@@ -4,7 +4,7 @@
 \alias{plot.Benford}
 \title{Plot method for Benford Analysis}
 \usage{
-\method{plot}{Benford}(x,except=c("mantissa","abs diff"), multiple=TRUE, ...)
+\method{plot}{Benford}(x,except=c("chi square","abs diff"), multiple=TRUE, ...)
 }
 \arguments{
 \item{x}{a "Benford" object}

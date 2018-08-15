@@ -51,6 +51,8 @@ chisq.test.bfd <- function(squared.diff, data.name){
   return(chisq.bfd)
 }
 
+
+
 #' @title Extracts the leading digits from the data
 #' @description It extracts the leading digits from the data.
 #' 
@@ -251,6 +253,24 @@ plotting.data.vs.benford <- function(x, ...) {
   #          legend=c("Data", "Benford"))
 }
 
+plotting.data.vs.benford.v2 <- function(x, ...) {
+  
+  fitstat <- (1- sum(abs(x[["bfd"]][["data.dist"]] - x[["bfd"]][["benford.dist"]])))
+
+  xmarks <- barplot(x[["bfd"]]$data.dist.freq, 
+                    col = "lightblue", 
+                    main = "Digits Distribution",
+                    xlab = paste0("Digits\n Fit:", as.character(fitstat)), ylab = "Freq",
+                    ylim = c(0,max(c(x[["bfd"]]$data.dist.freq, x[["bfd"]]$benford.dist.freq))*1.1))
+  
+  axis(1, at = xmarks, labels = x[["bfd"]]$digits)
+  
+  lines(xmarks, x[["bfd"]]$benford.dist.freq, lty = 2, lwd = 2, col = "red")
+  
+  #   legend("topright", lty=c(1,2), lwd=2, col=c("lightblue", "red"), 
+  #          legend=c("Data", "Benford"))
+}
+
 plotting.second.order <- function(x, ...) {
   y <- x[["bfd"]]$benford.so.dist.freq
   xmarks <- barplot(x[["bfd"]]$data.second.order.dist.freq, 
@@ -303,6 +323,19 @@ plotting.chi_squared <- function(x, ...) {
   axis(1, at = x[["bfd"]]$digits)
 }
 
+plotting.chi_squared.v2 <- function(x, ...) {
+  
+  plot(x[["bfd"]]$digits, x[["bfd"]]$squared.diff, 
+       pch = "x", col = "blue", 
+       xlab = paste0("Digits\n", "Chi-stat:", as.character()),
+       ylab = "Chi-squared", 
+       main = "Chi-Squared Difference",
+       xaxt = "n")
+  
+  axis(1, at = x[["bfd"]]$digits)
+}
+
+
 plotting.abs.diff <- function(x, ...) {
   plot(x[["bfd"]]$digits, x[["bfd"]]$absolute.diff, 
        pch = "x", 
@@ -336,3 +369,21 @@ plotting.legend <- function(x) {
          lwd = 2, 
          lty = c(1,1,2))
 }
+
+
+plotting.legend.list <- function(x, NameOfX) {
+  Obs <- x[["info"]][["n"]]
+  PV <- x[["stats"]][["mantissa.arc.test"]][["p.value"]]
+
+  plot(1, type = "n", axes = FALSE, xlab = "", ylab = "", main = paste("Legend \n Dataset:", NameOfX, "\n Observations: ", as.character(Obs), "\n Mantissa p-value: ", as.character(PV)))
+  
+  plot_colors <- c("lightblue","blue","red")
+  legend(x = "center",
+         inset = 0,
+         legend = c("data", "data", "benford"), 
+         col = plot_colors, 
+         lwd = 2, 
+         lty = c(1,1,2))
+}
+
+

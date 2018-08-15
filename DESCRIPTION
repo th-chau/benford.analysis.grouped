@@ -1,10 +1,10 @@
-Package: benford.analysis
+Package: benford.analysis.grouped
 Type: Package
-Title: Benford Analysis for Data Validation and Forensic Analytics
-Version: 0.1.5.9000
-Author: Carlos Cinelli
-Maintainer: Carlos Cinelli <carloscinelli@hotmail.com>
-Description: Provides tools that make it easier to validate data using Benford's Law.
+Title: Benford Analysis Grouped
+Version: 0.0.1
+Author: Tak Huen Chau
+Maintainer: Tak Huen Chau <thchau@hkma.gov.hk>
+Description: A modification on Carlos Cinelli's benford analysis, enabling simplified 
 Depends:
     R (>= 3.0.0)
 Imports:
@@ -12,6 +12,6 @@ Imports:
 License: GPL-3
 Suggests:
     testthat
-URL: http://github.com/carloscinelli/benford.analysis
-BugReports: http://github.com/carloscinelli/benford.analysis/issues
-RoxygenNote: 6.0.1
+URL: http://github.com/th-chau/benford.analysis.grouped
+BugReports: http://github.com/th-chau/benford.analysis.grouped/issues
+RoxygenNote: 6.1.0
